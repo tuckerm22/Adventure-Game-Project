@@ -2,9 +2,10 @@
 
     Each program is executed three times with various random inputs
 '''
+
 #gamefunctions.py
 #Mercedes Tucker
-#03/4/25
+#02/11/25
 
 #This code creates four functions, purchase_item, new_random_monster,
 #print_welcome and print_shop_menu
@@ -35,16 +36,16 @@ def new_random_monster():
     monster_names = ["Goblin", "Dragon", "Vampire"]
     name = random.choice(monster_names)
     if name == "Goblin":
-        health = random.randint(30, 50)
-        power = random.randint(10, 20)
+        health = random.randint(5, 100)
+        power = random.randint(1,10)
         money = random.randint(5, 15)
     elif name == "Dragon":
-        health = random.randint(100, 200)
-        power = random.randint(50, 80)
+        health = random.randint(5, 100)
+        power = random.randint(10,30)
         money = random.randint(50, 100)
     elif name == "Vampire":
-        health = random.randint(60, 100)
-        power = random.randint(30, 50)
+        health = random.randint(5, 100)
+        power = random.randint(5,20)
         money = random.randint(20, 40)
     monster = {
         "name": name,
@@ -54,7 +55,10 @@ def new_random_monster():
         "money": money
     }
     
+    # print(monster)
     return monster
+    
+
 
 # Now defining and running print_welcome
 def print_welcome(name, width = 20):
@@ -110,4 +114,3 @@ def test_functions():
 
 if __name__ == "__main__":
     test_functions()
-
