@@ -15,14 +15,14 @@ print_shop_menu("Egg", .23, "Pear", 12.34)
 MAX_HEALTH = 100
 current_hp = MAX_HEALTH
 current_gold = 10   
-
+inventory = {}
 
 def getUserFightOptions():
     
     while True:
         print("Keep fighting or run away?")
         print("What would you like to do?")
-        print("1) Keeo fighting")
+        print("1) Keep fighting")
         print("2) Run away")
         
         selection = input("Enter your choice (1 or 2): ")
@@ -35,27 +35,60 @@ def displayFightStatistics(monster):
     global current_hp
     print("me: health = {}".format(current_hp))
     print("monster: health = {}".format(monster["health"]))
-          
+
+def pick_item():
+    global current_gold
+    shop_items = [
+        {"price": 5, "name": "sword", "type": "weapon", "maxDurability": 10, "currentDurability": 40},
+        {"price": 1, "name": "Armour", "type": "shield", "maxDurability": 5, "currentDurability": 25}
+    ]
+    
+    selection = input("Enter a choice, weapon or shield: ")
+    if selection == "weapon":
+        item = shop_items[0]
+        print(f"Item details: {item}") 
+        if current_gold >= item["price"]:
+            inventory["weapon"] = item
+            current_gold -= item["price"]
+            print(f"You have bought: {inventory['weapon']['name']}")
+            print(f"Remaining gold: {current_gold}")
+            print(inventory)
+        else:
+            print("You do not have enough gold to buy this item.")
+    elif selection == "shield":
+        item = shop_items[1]
+        if current_gold >= item["price"]:
+            inventory["shield"] = item
+            current_gold -= item["price"]
+            print(f"You have bought: {inventory['shield']['name']}")
+            print(f"Remaining gold: {current_gold}")
+        else:
+            print("You do not have enough gold to buy this item.")
+    else:
+        print("Invalid selection. Please choose either 'weapon' or 'shield'.")
 
 def fight_monster():
-
+    
     global current_hp
     global current_gold
-
     if current_hp <= 0:
         print("not enough health to fight")
         return
-
     monster = new_random_monster()
     mydamage = monster["power"]
-    
-    print("you are fighting a {}!".format(monster["name"]))
-
+    if current_gold >= 0:
+        print("you are fighting a {}!".format(monster["name"]))
+        pick_item()
+    else:
+        print("you are fighting a {}!".format(monster["name"]))
     while True:
-
         monsterdamage = random.randint(5,30)
-
-        monster["health"] -= monsterdamage
+        weapondamage = inventory["weapon"]["maxDurability"]
+        monster["health"] -= (monsterdamage + weapondamage)
+        if weapondamage <=30:
+            weapondamage = 40 - weapondamage
+        else:
+            print(f'Not enough Durability to use weapon')
         if monster["health"] <= 0:
             print("you killed a {}!".format(monster["name"]))
             return
@@ -64,10 +97,10 @@ def fight_monster():
             print("you died fighting a {}!".format(monster["name"]))
             return
         displayFightStatistics(monster)
-        choice = getUserFightOption()
+        choice = getUserFightOptions()
         if choice == '2':
             break
-
+    
 def pick_game():
 
     global current_hp
@@ -84,6 +117,7 @@ def pick_game():
         selection = input("Enter your choice (1, 2, or 3): ")
         if selection == '1':
             fight_monster()
+            
         elif selection == '2':
             if current_gold >= 5:
                 current_gold -= 5
@@ -99,8 +133,10 @@ def pick_game():
             
         else:
             print('Not a valid input, please try again from selections 1, 2 and 3')
-
+        
+    
 pick_game()
+
 
         
     
