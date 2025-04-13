@@ -136,7 +136,7 @@ def pick_game():
             break
         else:
             print('Not a valid input, please try again from selections 1, 2 and 3')
-'''if save_or_resume == "load previous game":
+if save_or_resume == "load previous game":
     with open(filename, 'r') as file:
         game_data = json.load(file)
         current_hp = game_data.get("current_hp", MAX_HEALTH)
@@ -154,7 +154,6 @@ game = {
 with open(filename, 'w') as file:
     json.dump(game,file)
 print(f'Data saved to {filename}')
-'''
 def circle_rect_collision(circle, rect):
     """
     Checks if a circle and a rectangle are colliding.
