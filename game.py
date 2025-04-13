@@ -1,6 +1,8 @@
 from gamefunctions import *
 import random
 import json
+import pygame
+import math
 '''
 leftovermoney = purchase_item(round((random.random() * 10), 3),
                                   round((random.random() * 10), 3),
@@ -16,7 +18,7 @@ current_hp = MAX_HEALTH
 current_gold = 10   
 inventory = {}
 filename = "game.json"
-save_or_resume = input("Pick one, Start new game or load previous game: ")
+'''save_or_resume = input("Pick one, Start new game or load previous game: ")'''
 
 def getUserFightOptions():
     while True:
@@ -134,7 +136,7 @@ def pick_game():
             break
         else:
             print('Not a valid input, please try again from selections 1, 2 and 3')
-if save_or_resume == "load previous game":
+'''if save_or_resume == "load previous game":
     with open(filename, 'r') as file:
         game_data = json.load(file)
         current_hp = game_data.get("current_hp", MAX_HEALTH)
@@ -152,6 +154,113 @@ game = {
 with open(filename, 'w') as file:
     json.dump(game,file)
 print(f'Data saved to {filename}')
+'''
+def circle_rect_collision(circle, rect):
+    """
+    Checks if a circle and a rectangle are colliding.
+
+    Args:
+        circle: A tuple (x, y, radius) representing the circle.
+        rect: A pygame.Rect object representing the rectangle.
+
+    Returns:
+        True if the circle and rectangle are colliding, False otherwise.
+    """
+    circle_x, circle_y, circle_radius = circle
+
+    # Find the closest point on the rectangle to the circle's center
+    closest_x = max(rect.left, min(circle_x, rect.right))
+    closest_y = max(rect.top, min(circle_y, rect.bottom))
+
+    # Calculate the distance between the closest point and the circle's center
+    distance_x = circle_x - closest_x
+    distance_y = circle_y - closest_y
+    distance_squared = distance_x**2 + distance_y**2
+
+    # Check if the distance is less than the circle's radius squared
+    return distance_squared <= circle_radius**2
+
+
+pygame.init()
+red = (255,0,0)
+green = (0,255,0)
+white = (255,255,255)
+window = pygame.display.set_mode(((320, 320)))
+
+x, y = 295, 145
+width, height = 10, 10
+vel = 1
+gameExit = False
+window.fill((0, 0, 0))
+pygame.draw.circle(window, green ,(300,150),10,width=0)
+pygame.draw.circle(window, red ,(110,150),10,width=0) 
+pygame.draw.rect(window, white , (x, y, width, height))
+green_circle = (300,150,10)
+red_circle = (105,150,10)
+pygame.display.update()
+
+while not gameExit:
+    new_x = x
+    new_y = y
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = True
+        if event.type == pygame.KEYDOWN:
+            we_fight_monster = True
+            if event.key == pygame.K_LEFT:
+                new_x -= 32
+            elif event.key == pygame.K_RIGHT:
+                new_x += 32
+            elif event.key == pygame.K_UP:
+                new_y -= 32
+            elif event.key == pygame.K_DOWN:
+                new_y += 32
+            elif event.key == pygame.K_SPACE:
+                gameExit = True
+
+            if new_x < 320 and new_x > 0 or new_y < 320 or new_y > 0:
+                x = new_x
+                y = new_y
+                window.fill((0, 0, 0))
+                pygame.draw.circle(window, green ,(300,150),10,width=0)
+                pygame.draw.circle(window, red ,(110,150),10,width=0)
+                pygame.draw.rect(window, white , (x, y, width, height))
+                pygame.display.update()
+                rect = pygame.Rect(x,y,width,height)
+
+                if circle_rect_collision(green_circle, rect):
+                    gameExit = True
+                elif circle_rect_collision(red_circle, rect):
+                    if we_fight_monster:
+                        pygame.quit()
+                        fight_monster()
+                        if current_hp <= 0:
+                            gameExit = True
+                            break
+                        pygame.init()
+                        window = pygame.display.set_mode(((320, 320)))
+                        window.fill((0, 0, 0))
+                        pygame.draw.circle(window, green ,(300,150),10,width=0)
+                        pygame.draw.circle(window, red ,(110,150),10,width=0) 
+                        pygame.draw.rect(window, white , (x, y, width, height))
+                        pygame.display.update()
+                        we_fight_monster = False
+ 
+
+                    
+                        
+        
+                    
+                        
+                
+
+        
+pygame.quit()
+
+
+
+
+
 
 
 
