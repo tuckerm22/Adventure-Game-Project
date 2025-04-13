@@ -18,7 +18,7 @@ current_hp = MAX_HEALTH
 current_gold = 10   
 inventory = {}
 filename = "game.json"
-'''save_or_resume = input("Pick one, Start new game or load previous game: ")'''
+save_or_resume = input("Pick one, Start new game or load previous game: ")
 
 def getUserFightOptions():
     while True:
