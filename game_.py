@@ -2,6 +2,7 @@ from gamefunctions import *
 import random
 import json
 import pygame
+pygame.init()
 import math
 
 MAX_HEALTH = 100
@@ -9,6 +10,8 @@ current_hp = MAX_HEALTH
 current_gold = 10   
 inventory = {}
 filename = "game.json"
+pygame.mixer.init()
+town_sound = pygame.mixer.Sound('town_sound.mp3')
 
 save_or_resume = input("Pick one, Start new game or load previous game: ")
 def drawimages():
@@ -68,30 +71,7 @@ def circle_rect_collision(circle, rect):
 import pygame
 import sys
 
-def circle_rect_collision(circle, rect):
-    """
-    Check collision between a circle and a rectangle.
-    
-    circle: Tuple (cx, cy, radius)
-    rect: pygame.Rect object
-    
-    Returns True if they collide, False otherwise.
-    """
-    cx, cy, radius = circle
-    # Find closest point on the rectangle to the circle center
-    closest_x = max(rect.left, min(cx, rect.right))
-    closest_y = max(rect.top, min(cy, rect.bottom))
-
-    # Calculate distance from circle center to closest point
-    distance_x = cx - closest_x
-    distance_y = cy - closest_y
-    distance_squared = distance_x**2 + distance_y**2
-
-    return distance_squared < radius**2
-
 def playgame():
-    pygame.init()
-
     player_image = pygame.image.load('monster.png')
     player = pygame.transform.scale(player_image, (50, 50))
     monster_image = pygame.image.load('2.png')
@@ -142,15 +122,17 @@ def playgame():
                     rect = pygame.Rect(x, y, width, height)
 
                 if circle_rect_collision(green_circle, rect):
+                    town_sound.play()
                     gameExit = True
                 elif rectangles_collide(monster.get_rect(topleft=(50, 50)), rect):
                     if we_fight_monster:
                         pygame.quit()
                         fight_monster()
+                        
                         if current_hp <= 0:
-                            gameExit = True
-                            break
-                        pygame.init()
+                               gameExit = True
+                               break
+                       
                         window = pygame.display.set_mode((320, 320))
                         window.fill((0, 0, 0))
                         pygame.draw.circle(window, green, (300, 150), 10, width=0)
@@ -183,6 +165,7 @@ def displayFightStatistics(monster):
     print("monster: health = {}".format(monster["health"]))
 
 def pick_item():
+   
     global current_gold
     shop_items = [
         {"price": 5, "name": "sword", "type": "weapon", "maxDurability": 10, "currentDurability": 10},
